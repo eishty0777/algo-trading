@@ -7,11 +7,11 @@ class Stock(models.Model):
     market_cap = models.BigIntegerField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
 
 class PriceData(models.Model):
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="price_data")
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="price_data", null=True, blank=True)
     date = models.DateField(db_index=True)
     open = models.DecimalField(max_digits=12, decimal_places=4)
     high = models.DecimalField(max_digits=12, decimal_places=4)
@@ -25,7 +25,7 @@ class PriceData(models.Model):
 class MomentumScore(models.Model):
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="momentum_scores")
     calculation_date = models.DateField(db_index=True)
-    momentum_score = models.DecimalField(max_digits=10, decimal_places=6)
+    momentum_score = models.DecimalField(max_digits=10, decimal_places=6, default=0)
     rank = models.IntegerField(null=True, blank=True)
     quintile = models.IntegerField(null=True, blank=True)
     is_top_quintile = models.BooleanField(default=False)
@@ -42,7 +42,7 @@ class TradingSignal(models.Model):
     stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="trading_signals")
     signal_date = models.DateField(db_index=True)
     signal_type = models.CharField(max_length=4, choices=SIGNAL_TYPES)
-    momentum_score = models.ForeignKey(MomentumScore, on_delete=models.CASCADE, null=True)
+    momentum_score = models.ForeignKey(MomentumScore, on_delete=models.CASCADE, null=True, default=0)
     target_quantity = models.IntegerField(null=True, blank=True)
     target_value = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     reason = models.TextField(blank=True)
